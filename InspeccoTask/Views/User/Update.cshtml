@@ -1,0 +1,73 @@
+﻿@using Utilities.Helpers;
+@model InspeccoTask.Models.UserModels.UpdateUserViewModel;
+@{
+    Layout = "_Layout";
+}
+
+
+<form id="userUpdate">
+    <input id="userId" value="@Model.User.Id" hidden />
+    <div class="form-group">
+        <label for="exampleInputEmail1">Ad Soyad</label>
+        <input type="text" class="form-control" id="userName" aria-describedby="emailHelp" placeholder="Ad Soyad" value="@Model.User.Username">
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+    <div class="form-group">
+        <label for="exampleInputPassword1">Email</label>
+        <input type="email" class="form-control" id="email" placeholder="Email" value="@Model.User.Email">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputPassword1">Şifre</label>
+        <input type="password" class="form-control" id="password" placeholder="Password" value="@Model.User.Password">
+    </div>
+    
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Yetki</label>
+        <select class="form-control"  id="userRoleId">
+            <option value="3">Admin</option>
+            <option value="4">Member</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Güncelle</button>
+</form>
+
+<script>
+    (function () {
+        let form = document.querySelector("#userUpdate");
+        if (form) {
+            form.querySelector("button").addEventListener("click", function (e) {
+                e.preventDefault();
+                let data = {
+                    UserId : form.querySelector("#userId").value,
+                    Email: form.querySelector("#email").value,
+                    UserName: form.querySelector("#userName").value,
+                    Password: form.querySelector("#password").value,
+                    UserRoleId: form.querySelector("#userRoleId").value,
+                    Status :1
+                };
+
+                let settings = {
+                    headers: {
+                        'Content-Type': "application/json"
+                    },
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                }
+
+                console.log(settings);
+                fetch('@WebHelpers.GetWebPath()/user/update', settings).then(data => data.json()).then(json => {
+                    if (json.result.isSuccess == false) {
+                        alert('Kullanıcı bilgileri yanlış!');
+                    } else {
+                        alert("Hoşgeldin yönlendiriliyorsunuz !");
+                        window.location = "/user/list"
+                    }
+
+                    console.log(json);
+                }).catch(err => {
+                    alert("Teknik bir problem oluştu");
+                })
+            });
+        }
+    })();
+</script>
